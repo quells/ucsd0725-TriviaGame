@@ -3,6 +3,10 @@ body {
 	background-image: url("../img/pokeball-pattern.png");
 }
 
+#loading-container {
+	text-align: center;
+}
+
 .btn-poke {
 	background: #326CB2;
 	color: #FECC2F;
