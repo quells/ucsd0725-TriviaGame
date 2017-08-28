@@ -16,24 +16,25 @@
 				</div>
 				<div class="card-body">
 					<div class="row">
-						<div class="col-12 col-md-6">
+						<div class="col-12 col-md-5 col-lg-6">
 							<h1 class="card-title text-center text-md-left">Who&rsquo;s That Pok&#233;mon?</h1>
 						</div>
-						<div class="col-12 col-md-6">
-							<h2 id="timeRemaining" class="text-center text-md-right mt-md-4 mt-lg-2">00:10 Remaining</h2>
+						<div class="col-12 col-md-7 col-lg-6">
+							<!-- <h2 id="timeRemaining" class="text-center text-md-right mt-md-4 mt-lg-2">00:10 Remaining</h2> -->
+							<h2 id="timeRemaining" class="text-center text-md-right mt-md-4 mt-lg-2">Next Round Starts Soon</h2>
 						</div>
 					</div>
 					<hr>
-					<div class="d-flex flex-column flex-md-row justify-content-start">
+					<div class="d-flex flex-column flex-md-row justify-content-center">
 						<button class="btn btn-poke m-1">Pikachu</button>
 						<button class="btn btn-poke m-1">Pikachu</button>
 						<button class="btn btn-poke m-1">Pikachu</button>
 						<button class="btn btn-poke m-1">Pikachu</button>
 					</div>
 					<div class="text-center mt-4">
-						<canvas class="pokeball" id="pokeball0" width="50" height="50"></canvas>
-						<canvas class="pokeball" id="pokeball1" width="50" height="50"></canvas>
-						<canvas class="pokeball" id="pokeball2" width="50" height="50"></canvas>
+						<canvas class="pokeball" width="50" height="50" index="0"></canvas>
+						<canvas class="pokeball" width="50" height="50" index="1"></canvas>
+						<canvas class="pokeball" width="50" height="50" index="2"></canvas>
 					</div>
 				</div>
 			</div>
@@ -44,11 +45,15 @@
 		<script type="text/javascript">
 			var pbLight = new Pokeball(1, "#eee");
 			var pbDark = new Pokeball(1, "#ccc");
-			for (var i = 0; i < 3; i++) {
-				var canvas = $("#pokeball" + i)[0];
-				var ctx = canvas.getContext("2d");
-				ctx.drawImage(pbDark.canvas, 5, 5);
-			}
+			$(".pokeball").each(function() {
+				var index = $(this).attr("index");
+				var ctx = $(this)[0].getContext("2d");
+				if (index < 1) {
+					ctx.drawImage(pbLight.canvas, 5, 5);
+				} else {
+					ctx.drawImage(pbDark.canvas, 5, 5);
+				}
+			});
 		</script>
 	</body>
 </html>
