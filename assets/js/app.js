@@ -1,5 +1,7 @@
 var App = function(questions) {
 	this.questions = questions;
+	this.timeRemaining = 0;
+	this.countdownInterval;
 
 	this.preLoadImages = function(callback) {
 		var numToLoad = 1;
@@ -46,19 +48,20 @@ var App = function(questions) {
 		var body = $("<div>").addClass("card-body").appendTo(card);
 
 		var row = $("<div>").addClass("row").appendTo(body);
-		var col1 = $("<div>").addClass("col-12 col-md-6").appendTo(row);
+		var col1 = $("<div>").addClass("col-12 col-md-5 col-lg-6").appendTo(row);
 		$("<h1>").addClass("card-title text-center text-md-left").text("Who’s That Pokémon?").appendTo(col1);
-		var col2 = $("<div>").addClass("col-12 col-md-6").appendTo(row);
+		var col2 = $("<div>").addClass("col-12 col-md-7 col-lg-6").appendTo(row);
 		$("<h2>").addClass("text-center text-md-right mt-md-4 mt-lg-2").attr("id", "timeRemaining").appendTo(col2);
 
 		$("<hr>").appendTo(body);
 
-		$("<div>").addClass("d-flex flex-column flex-md-row justify-content-start").attr("id", "buttons").appendTo(body);
+		$("<div>").addClass("d-flex flex-column flex-md-row justify-content-center").attr("id", "buttons").appendTo(body);
 
 		$("#container").append(card);
 	};
 
 	this.handleQuestion = function(question) {
+		var self = this;
 		var buttons = $("#buttons");
 
 		// Clear old interface
@@ -69,22 +72,34 @@ var App = function(questions) {
 		// Setup new interface
 		var hiddenImage = question.hiddenImage.attr("id", "hiddenImage");
 		$("#poke-image").append(hiddenImage);
-		var self = this;
 		for (var i = 0; i < question.options.length; i++) {
 			var option = question.options[i];
 			var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(function() {
-				self.handleOptionSelection(self);
+				self.handleOptionSelection();
 			});
 			buttons.append(button);
 		}
 
-		// TODO: Setup countdown for question time limit
+		// Setup countdown
+		this.timeRemaining = 10;
+		$("#timeRemaining").text(this.formatTime(this.timeRemaining) + " Remaining");
+		this.countdownInterval = setInterval(function(self) {
+			self.timeRemaining--;
+			$("#timeRemaining").text(self.formatTime(self.timeRemaining) + " Remaining");
+			if (self.timeRemaining < 1) {
+				$("#timeRemaining").text("Next Round Starts Soon");
+				self.updateInterfaceForEndOfQuestion();
+				self.game.totalAnswers++;
+				clearInterval(self.countdownInterval);
+			}
+		}, 1000, self);
 	};
 
-	this.handleOptionSelection = function(self) {
+	this.updateInterfaceForEndOfQuestion = function() {
+		var self = this;
 		// Inactivate incorrect options
 		$("button").each(function() {
-			$(this).click(function(){});
+			$(this).prop('onclick',null).off('click'); // Disable click events
 			if ($(this).text() !== self.game.currentQuestion.correct) {
 				$(this).addClass("inactive");
 			}
@@ -94,13 +109,29 @@ var App = function(questions) {
 		$("#hiddenImage").remove();
 		var visibleImage = this.game.currentQuestion.visibleImage.attr("id", "visibleImage");
 		$("#poke-image").append(visibleImage);
+	}
 
-		var gameIsFinished = this.game.handleOptionSelection($(this).text());
+	this.handleOptionSelection = function() {
+		clearInterval(this.countdownInterval);
+		this.updateInterfaceForEndOfQuestion();
+		this.game.handleOptionSelection($(this).text());
+		var gameIsFinished = this.game.handleNextQuestion();
 		if (gameIsFinished) {
+			console.log("game over");
 			// TODO: Update UI with game stats, etc
 		} else {
+			console.log("next question")
 			// TODO: Get next question
 			// TODO: Countdown to
 		}
+	};
+
+	this.formatTime = function(t) {
+		t = Math.abs(t);
+		var sec = t % 60;
+		var min = Math.floor((t-sec)/60);
+		if (sec < 10) { sec = "0" + sec; }
+		if (min < 10) { min = "0" + min; }
+		return min + ":" + sec;
 	};
 };
