@@ -1,110 +1,106 @@
-var game;
-var headerImage;
+var App = function(questions) {
+	this.questions = questions;
 
-$(document).ready(function() {
-	// Pre-load all images
-	var numToLoad = 1;
+	this.preLoadImages = function(callback) {
+		var numToLoad = 1;
 
-	headerImage = $("<img>").on("load", function() {
-		numToLoad--;
-	}).attr("src", "assets/img/WTP.png")
-
-	for (var i = 0; i < MysteryPokemon.length; i++) {
-		numToLoad += 2;
-		var p = MysteryPokemon[i];
-		$("<img>").attr("index", i).on("load", function() {
-			var i = $(this).attr("index");
-			MysteryPokemon[i].hiddenImage = $(this).addClass("img-fluid poke-overlay");;
+		this.headerImage = $("<img>").on("load", function() {
 			numToLoad--;
-		}).attr("src", p.hiddenURL);
-		$("<img>").attr("index", i).on("load", function() {
-			var i = $(this).attr("index");
-			MysteryPokemon[i].visibleImage = $(this).addClass("img-fluid poke-overlay");;
-			numToLoad--;
-		}).attr("src", p.visibleURL);
-	}
+		}).attr("src", "assets/img/WTP.png")
 
-	var loadingInterval = setInterval(function() {
-		if (numToLoad < 1) {
-			clearInterval(loadingInterval);
-			AppMain();
-			return;
+		for (var i = 0; i < questions.length; i++) {
+			numToLoad += 2;
+			var p = questions[i];
+			$("<img>").attr("index", i).on("load", function() {
+				var i = $(this).attr("index");
+				questions[i].hiddenImage = $(this).addClass("img-fluid poke-overlay");;
+				numToLoad--;
+			}).attr("src", p.hiddenURL);
+			$("<img>").attr("index", i).on("load", function() {
+				var i = $(this).attr("index");
+				questions[i].visibleImage = $(this).addClass("img-fluid poke-overlay");;
+				numToLoad--;
+			}).attr("src", p.visibleURL);
 		}
-	}, 20);
-});
 
-function AppBuildInterface() {
-	var card = $("<div>").addClass("card mt-3");
+		var loadingInterval = setInterval(function() {
+			if (numToLoad < 1) {
+				clearInterval(loadingInterval);
+				callback();
+			}
+		}, 20);
+	};
 
-	var header = $("<div>").addClass("card-img-top").attr("id", "poke-image").appendTo(card);
-	headerImage.addClass("card-img-top img-fluid").attr("alt", "Who's That Pokemon?").appendTo(header);
+	this.main = function() {
+		this.buildInterface();
+		this.game = new TriviaGame(MysteryPokemon);
+		this.handleQuestion(this.game.currentQuestion);
+	};
 
-	var body = $("<div>").addClass("card-body").appendTo(card);
+	this.buildInterface = function() {
+		var card = $("<div>").addClass("card mt-3");
 
-	var row = $("<div>").addClass("row").appendTo(body);
-	var col1 = $("<div>").addClass("col-12 col-md-6").appendTo(row);
-	$("<h1>").addClass("card-title text-center text-md-left").text("Who’s That Pokémon?").appendTo(col1);
-	var col2 = $("<div>").addClass("col-12 col-md-6").appendTo(row);
-	$("<h2>").addClass("text-center text-md-right mt-md-4 mt-lg-2").attr("id", "timeRemaining").appendTo(col2);
+		var header = $("<div>").addClass("card-img-top").attr("id", "poke-image").appendTo(card);
+		this.headerImage.addClass("card-img-top img-fluid").attr("alt", "Who's That Pokemon?").appendTo(header);
 
-	$("<hr>").appendTo(body);
+		var body = $("<div>").addClass("card-body").appendTo(card);
 
-	$("<div>").addClass("d-flex flex-column flex-md-row justify-content-start").attr("id", "buttons").appendTo(body);
+		var row = $("<div>").addClass("row").appendTo(body);
+		var col1 = $("<div>").addClass("col-12 col-md-6").appendTo(row);
+		$("<h1>").addClass("card-title text-center text-md-left").text("Who’s That Pokémon?").appendTo(col1);
+		var col2 = $("<div>").addClass("col-12 col-md-6").appendTo(row);
+		$("<h2>").addClass("text-center text-md-right mt-md-4 mt-lg-2").attr("id", "timeRemaining").appendTo(col2);
 
-	var container = $("#container");
-	container.append(card);
-};
+		$("<hr>").appendTo(body);
 
-function AppHandleQuestion(question) {
-	var buttons = $("#buttons");
+		$("<div>").addClass("d-flex flex-column flex-md-row justify-content-start").attr("id", "buttons").appendTo(body);
 
-	// Clear old interface
-	$("#hiddenImage").remove();
-	$("#visibleImage").remove();
-	buttons.empty();
+		$("#container").append(card);
+	};
 
-	// Setup new interface
-	var hiddenImage = question.hiddenImage.attr("id", "hiddenImage");
-	$("#poke-image").append(hiddenImage);
-	for (var i = 0; i < question.options.length; i++) {
-		var option = question.options[i];
-		var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(AppHandleOptionSelection);
-		buttons.append(button);
-	}
+	this.handleQuestion = function(question) {
+		var buttons = $("#buttons");
 
-	// TODO: Setup countdown for question time limit
-};
+		// Clear old interface
+		$("#hiddenImage").remove();
+		$("#visibleImage").remove();
+		buttons.empty();
 
-function AppHandleOptionSelection() {
-	// Inactivate incorrect options
-	$("button").each(function() {
-		$(this).click(function(){});
-		if ($(this).text() !== game.currentQuestion.correct) {
-			$(this).addClass("inactive");
+		// Setup new interface
+		var hiddenImage = question.hiddenImage.attr("id", "hiddenImage");
+		$("#poke-image").append(hiddenImage);
+		var self = this;
+		for (var i = 0; i < question.options.length; i++) {
+			var option = question.options[i];
+			var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(function() {
+				self.handleOptionSelection(self);
+			});
+			buttons.append(button);
 		}
-	});
 
-	// Swap overlay images
-	$("#hiddenImage").remove();
-	var visibleImage = game.currentQuestion.visibleImage.attr("id", "visibleImage");
-	$("#poke-image").append(visibleImage);
+		// TODO: Setup countdown for question time limit
+	};
 
-	var gameIsFinished = game.handleOptionSelection($(this).text());
-	if (gameIsFinished) {
-		// TODO: Update UI with game stats, etc
-	} else {
-		// TODO: Get next question
-		// TODO: Countdown to
-	}
-};
+	this.handleOptionSelection = function(self) {
+		// Inactivate incorrect options
+		$("button").each(function() {
+			$(this).click(function(){});
+			if ($(this).text() !== self.game.currentQuestion.correct) {
+				$(this).addClass("inactive");
+			}
+		});
 
-function AppMain() {
-	// Remove loading interface
-	exitLoadingLoop = true;
-	$("#loading-container").remove();
+		// Swap overlay images
+		$("#hiddenImage").remove();
+		var visibleImage = this.game.currentQuestion.visibleImage.attr("id", "visibleImage");
+		$("#poke-image").append(visibleImage);
 
-	AppBuildInterface();
-
-	game = new TriviaGame(MysteryPokemon);
-	AppHandleQuestion(game.currentQuestion);
+		var gameIsFinished = this.game.handleOptionSelection($(this).text());
+		if (gameIsFinished) {
+			// TODO: Update UI with game stats, etc
+		} else {
+			// TODO: Get next question
+			// TODO: Countdown to
+		}
+	};
 };

@@ -21,11 +21,15 @@ var TriviaGame = function(questions) {
 	this.handleOptionSelection = function(answer) {
 		this.totalAnswers++;
 		if (answer === this.currentQuestion.correct) { this.correctAnswers++; }
+	}
 
+	this.handleNextQuestion = function() {
 		if (this.questions.length < 1) {
 			// End of questions
 			return true;
 		}
+		this.spentQuestions.push(this.currentQuestion);
+		this.currentQuestion = this.questions.pop();
 		return false;
 	}
 }

@@ -17,6 +17,7 @@
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 		<script src="assets/js/pokeball.js" charset="utf-8"></script>
 		<script type="text/javascript">
+			// Draw spinning pokeball while loading images
 			var pokeball = new Pokeball(5, "#3E5588");
 			var canvas = $("#loading")[0];
 			var ctx = canvas.getContext("2d");
@@ -49,5 +50,17 @@
 		<script src="assets/js/pokemon.js" charset="utf-8"></script>
 		<script src="assets/js/trivia.js" charset="utf-8"></script>
 		<script src="assets/js/app.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var app = new App(MysteryPokemon);
+				app.preLoadImages(function() {
+					// Remove loading interface
+					exitLoadingLoop = true;
+					$("#loading-container").remove();
+
+					app.main();
+				});
+			});
+		</script>
 	</body>
 </html>
