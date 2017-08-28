@@ -18,15 +18,14 @@ var TriviaGame = function(questions) {
 		this.currentQuestion = this.questions.pop();
 	}
 
-	this.handleSelection = function(answer, callback) {
+	this.handleOptionSelection = function(answer) {
 		this.totalAnswers++;
 		if (answer === this.currentQuestion.correct) { this.correctAnswers++; }
-		
+
 		if (this.questions.length < 1) {
 			// End of questions
-			callback(true);
-		} else {
-			callback(false);
+			return true;
 		}
+		return false;
 	}
 }

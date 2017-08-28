@@ -33,7 +33,7 @@ $(document).ready(function() {
 	}, 20);
 });
 
-function BuildInterface() {
+function AppBuildInterface() {
 	var card = $("<div>").addClass("card mt-3");
 
 	var header = $("<div>").addClass("card-img-top").attr("id", "poke-image").appendTo(card);
@@ -53,21 +53,30 @@ function BuildInterface() {
 
 	var container = $("#container");
 	container.append(card);
-}
+};
 
-function HandleQuestion(game) {
-	var hiddenImage = game.currentQuestion.hiddenImage.attr("id", "hiddenImage");
-	$("#poke-image").append(hiddenImage);
+function AppHandleQuestion(question) {
 	var buttons = $("#buttons");
+
+	// Clear old interface
+	$("#hiddenImage").remove();
+	$("#visibleImage").remove();
 	buttons.empty();
-	for (var i = 0; i < game.currentQuestion.options.length; i++) {
-		var option = game.currentQuestion.options[i];
-		var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(HandleSelection);
+
+	// Setup new interface
+	var hiddenImage = question.hiddenImage.attr("id", "hiddenImage");
+	$("#poke-image").append(hiddenImage);
+	for (var i = 0; i < question.options.length; i++) {
+		var option = question.options[i];
+		var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(AppHandleOptionSelection);
 		buttons.append(button);
 	}
-}
 
-function HandleSelection() {
+	// TODO: Setup countdown for question time limit
+};
+
+function AppHandleOptionSelection() {
+	// Inactivate incorrect options
 	$("button").each(function() {
 		$(this).click(function(){});
 		if ($(this).text() !== game.currentQuestion.correct) {
@@ -75,21 +84,27 @@ function HandleSelection() {
 		}
 	});
 
+	// Swap overlay images
 	$("#hiddenImage").remove();
 	var visibleImage = game.currentQuestion.visibleImage.attr("id", "visibleImage");
 	$("#poke-image").append(visibleImage);
 
-	game.handleSelection($(this).text(), function(gameIsFinished) {
-		console.log(gameIsFinished);
-	});
-}
+	var gameIsFinished = game.handleOptionSelection($(this).text());
+	if (gameIsFinished) {
+		// TODO: Update UI with game stats, etc
+	} else {
+		// TODO: Get next question
+		// TODO: Countdown to
+	}
+};
 
 function AppMain() {
 	// Remove loading interface
 	exitLoadingLoop = true;
 	$("#loading-container").remove();
-	BuildInterface();
+
+	AppBuildInterface();
 
 	game = new TriviaGame(MysteryPokemon);
-	HandleQuestion(game)
-}
+	AppHandleQuestion(game.currentQuestion);
+};
