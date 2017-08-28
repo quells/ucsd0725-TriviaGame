@@ -1,6 +1,7 @@
 body {
 	background-color: #3C5DA6;
 	background-image: url("../img/pokeball-pattern.png");
+	background-attachment: fixed;
 }
 
 #loading-container {
