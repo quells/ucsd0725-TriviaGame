@@ -12,8 +12,12 @@ body {
 	color: #FECC2F;
 	font-size: 1.5em;
 }
+.btn-poke:hover { background: #3C5DA6; }
+.btn-poke:active { background: #3050A0; }
 
-.poke-image {
+.btn-poke.inactive { background: #ccc; color: #fff; }
+
+#poke-image {
 	position: relative;
 }
 

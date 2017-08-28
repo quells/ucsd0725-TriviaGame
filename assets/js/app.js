@@ -14,12 +14,12 @@ $(document).ready(function() {
 		var p = MysteryPokemon[i];
 		$("<img>").attr("index", i).on("load", function() {
 			var i = $(this).attr("index");
-			MysteryPokemon[i].hiddenImage = $(this);
+			MysteryPokemon[i].hiddenImage = $(this).addClass("img-fluid poke-overlay");;
 			numToLoad--;
 		}).attr("src", p.hiddenURL);
 		$("<img>").attr("index", i).on("load", function() {
 			var i = $(this).attr("index");
-			MysteryPokemon[i].visibleImage = $(this);
+			MysteryPokemon[i].visibleImage = $(this).addClass("img-fluid poke-overlay");;
 			numToLoad--;
 		}).attr("src", p.visibleURL);
 	}
@@ -36,7 +36,7 @@ $(document).ready(function() {
 function BuildInterface() {
 	var card = $("<div>").addClass("card mt-3");
 
-	var header = $("<div>").addClass("card-img-top poke-image").appendTo(card);
+	var header = $("<div>").addClass("card-img-top").attr("id", "poke-image").appendTo(card);
 	headerImage.addClass("card-img-top img-fluid").attr("alt", "Who's That Pokemon?").appendTo(header);
 
 	var body = $("<div>").addClass("card-body").appendTo(card);
@@ -55,6 +55,35 @@ function BuildInterface() {
 	container.append(card);
 }
 
+function HandleQuestion(game) {
+	var hiddenImage = game.currentQuestion.hiddenImage.attr("id", "hiddenImage");
+	$("#poke-image").append(hiddenImage);
+	var buttons = $("#buttons");
+	buttons.empty();
+	for (var i = 0; i < game.currentQuestion.options.length; i++) {
+		var option = game.currentQuestion.options[i];
+		var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(HandleSelection);
+		buttons.append(button);
+	}
+}
+
+function HandleSelection() {
+	$("button").each(function() {
+		$(this).click(function(){});
+		if ($(this).text() !== game.currentQuestion.correct) {
+			$(this).addClass("inactive");
+		}
+	});
+
+	$("#hiddenImage").remove();
+	var visibleImage = game.currentQuestion.visibleImage.attr("id", "visibleImage");
+	$("#poke-image").append(visibleImage);
+
+	game.handleSelection($(this).text(), function(gameIsFinished) {
+		console.log(gameIsFinished);
+	});
+}
+
 function AppMain() {
 	// Remove loading interface
 	exitLoadingLoop = true;
@@ -62,4 +91,5 @@ function AppMain() {
 	BuildInterface();
 
 	game = new TriviaGame(MysteryPokemon);
+	HandleQuestion(game)
 }
