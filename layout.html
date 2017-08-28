@@ -30,13 +30,25 @@
 						<button class="btn btn-poke m-1">Pikachu</button>
 						<button class="btn btn-poke m-1">Pikachu</button>
 					</div>
+					<div class="text-center mt-4">
+						<canvas class="pokeball" id="pokeball0" width="50" height="50"></canvas>
+						<canvas class="pokeball" id="pokeball1" width="50" height="50"></canvas>
+						<canvas class="pokeball" id="pokeball2" width="50" height="50"></canvas>
+					</div>
 				</div>
 			</div>
 		</div>
 
 		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="assets/js/pokemon.js" charset="utf-8"></script>
-		<script src="assets/js/trivia.js" charset="utf-8"></script>
-		<script src="assets/js/app.js" charset="utf-8"></script>
+		<script src="assets/js/pokeball.js" charset="utf-8"></script>
+		<script type="text/javascript">
+			var pbLight = new Pokeball(1, "#eee");
+			var pbDark = new Pokeball(1, "#ccc");
+			for (var i = 0; i < 3; i++) {
+				var canvas = $("#pokeball" + i)[0];
+				var ctx = canvas.getContext("2d");
+				ctx.drawImage(pbDark.canvas, 5, 5);
+			}
+		</script>
 	</body>
 </html>
