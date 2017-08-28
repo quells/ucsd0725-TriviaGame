@@ -51,7 +51,8 @@ function BuildInterface() {
 
 	$("<div>").addClass("d-flex flex-column flex-md-row justify-content-start").attr("id", "buttons").appendTo(body);
 
-	$(".container").append(card);
+	var container = $("#container");
+	container.append(card);
 }
 
 function AppMain() {
