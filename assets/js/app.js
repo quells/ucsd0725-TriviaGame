@@ -140,11 +140,11 @@ var App = function(questions) {
 				} else {
 					ctx.drawImage(self.pokeballLight.canvas, 5, 5);
 				}
-				if (self.timeRemaining < 1) {
-					clearInterval(self.countdownInterval);
-					self.handleNextQuestion();
-				}
 			});
+			if (self.timeRemaining < 1) {
+				clearInterval(self.countdownInterval);
+				self.handleNextQuestion();
+			}
 		}, 1500, self);
 	}
 
