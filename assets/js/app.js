@@ -2,6 +2,8 @@ var App = function(questions) {
 	this.questions = questions;
 	this.timeRemaining = 0;
 	this.countdownInterval;
+	this.pokeballDark = new Pokeball(1, "#ccc");
+	this.pokeballLight = new Pokeball(1, "#eee");
 
 	this.preLoadImages = function(callback) {
 		var numToLoad = 1;
@@ -57,6 +59,14 @@ var App = function(questions) {
 
 		$("<div>").addClass("d-flex flex-column flex-md-row justify-content-center").attr("id", "buttons").appendTo(body);
 
+		var pokeballs = $("<div>").addClass("text-center mt-4");
+		for (var i = 0; i < 3; i++) {
+			var pb = $("<canvas>").addClass("pokeball").attr({ "width": 50, "height": 50, "index": 2-i }).appendTo(pokeballs);
+			var ctx = pb[0].getContext("2d");
+			ctx.drawImage(this.pokeballLight.canvas, 5, 5);
+		}
+		body.append(pokeballs);
+
 		$("#container").append(card);
 	};
 
@@ -75,7 +85,7 @@ var App = function(questions) {
 		for (var i = 0; i < question.options.length; i++) {
 			var option = question.options[i];
 			var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(function() {
-				self.handleOptionSelection();
+				self.handleOptionSelection(self);
 			});
 			buttons.append(button);
 		}
@@ -87,10 +97,8 @@ var App = function(questions) {
 			self.timeRemaining--;
 			$("#timeRemaining").text(self.formatTime(self.timeRemaining) + " Remaining");
 			if (self.timeRemaining < 1) {
-				$("#timeRemaining").text("Next Round Starts Soon");
 				self.updateInterfaceForEndOfQuestion();
-				self.game.totalAnswers++;
-				clearInterval(self.countdownInterval);
+				self.game.handleOptionSelection("");
 			}
 		}, 1000, self);
 	};
@@ -109,12 +117,43 @@ var App = function(questions) {
 		$("#hiddenImage").remove();
 		var visibleImage = this.game.currentQuestion.visibleImage.attr("id", "visibleImage");
 		$("#poke-image").append(visibleImage);
+
+		// Update interface
+		$("#timeRemaining").text("Next Round Starts Soon");
+		$(".pokeball").each(function() {
+			var ctx = $(this)[0].getContext("2d");
+			ctx.clearRect(0, 0, $(this).width(), $(this).height());
+			ctx.drawImage(self.pokeballDark.canvas, 5, 5);
+		});
+
+		// Start countdown to next round
+		clearInterval(self.countdownInterval);
+		this.timeRemaining = 3;
+		this.countdownInterval = setInterval(function(self) {
+			self.timeRemaining--;
+			$(".pokeball").each(function() {
+				var index = $(this).attr("index");
+				var ctx = $(this)[0].getContext("2d");
+				ctx.clearRect(0, 0, $(this).width(), $(this).height());
+				if (index < self.timeRemaining) {
+					ctx.drawImage(self.pokeballDark.canvas, 5, 5);
+				} else {
+					ctx.drawImage(self.pokeballLight.canvas, 5, 5);
+				}
+				if (self.timeRemaining < 1) {
+					clearInterval(self.countdownInterval);
+					self.handleNextQuestion();
+				}
+			});
+		}, 1500, self);
 	}
 
-	this.handleOptionSelection = function() {
-		clearInterval(this.countdownInterval);
-		this.updateInterfaceForEndOfQuestion();
-		this.game.handleOptionSelection($(this).text());
+	this.handleOptionSelection = function(self) {
+		self.updateInterfaceForEndOfQuestion();
+		self.game.handleOptionSelection($(this).text());
+	};
+
+	this.handleNextQuestion = function() {
 		var gameIsFinished = this.game.handleNextQuestion();
 		if (gameIsFinished) {
 			console.log("game over");
@@ -124,7 +163,7 @@ var App = function(questions) {
 			// TODO: Get next question
 			// TODO: Countdown to
 		}
-	};
+	}
 
 	this.formatTime = function(t) {
 		t = Math.abs(t);
