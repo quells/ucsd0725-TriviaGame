@@ -85,13 +85,13 @@ var App = function(questions) {
 		for (var i = 0; i < question.options.length; i++) {
 			var option = question.options[i];
 			var button = $("<button>").addClass("btn btn-poke m-1").text(option).click(function() {
-				self.handleOptionSelection(self);
+				self.handleOptionSelection($(this));
 			});
 			buttons.append(button);
 		}
 
 		// Setup countdown
-		this.timeRemaining = 10;
+		this.timeRemaining = 15;
 		$("#timeRemaining").text(this.formatTime(this.timeRemaining) + " Remaining");
 		this.countdownInterval = setInterval(function(self) {
 			self.timeRemaining--;
@@ -148,9 +148,9 @@ var App = function(questions) {
 		}, 1500, self);
 	}
 
-	this.handleOptionSelection = function(self) {
-		self.updateInterfaceForEndOfQuestion();
-		self.game.handleOptionSelection($(this).text());
+	this.handleOptionSelection = function(button) {
+		this.updateInterfaceForEndOfQuestion();
+		this.game.handleOptionSelection(button.text());
 	};
 
 	this.handleNextQuestion = function() {
@@ -159,9 +159,7 @@ var App = function(questions) {
 			console.log("game over");
 			// TODO: Update UI with game stats, etc
 		} else {
-			console.log("next question")
-			// TODO: Get next question
-			// TODO: Countdown to
+			this.handleQuestion(this.game.currentQuestion);
 		}
 	}
 
