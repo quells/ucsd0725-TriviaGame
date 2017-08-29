@@ -77,6 +77,7 @@ var App = function(questions) {
         // Clear old interface
         $("#hiddenImage").remove();
         $("#visibleImage").remove();
+        $("#pokeFact").remove();
         buttons.empty();
 
         // Setup new interface
@@ -120,6 +121,10 @@ var App = function(questions) {
 
         // Update interface
         $("#timeRemaining").text("Next Round Starts Soon");
+        var pokeFact = $("<div>").attr("id", "pokeFact");
+        pokeFact.append($("<hr>"));
+        pokeFact.append($("<h3>").text(this.game.currentQuestion.fact));
+        $("<hr>").before(pokeFact);
         $(".pokeball").each(function() {
             var ctx = $(this)[0].getContext("2d");
             ctx.clearRect(0, 0, $(this).width(), $(this).height());
