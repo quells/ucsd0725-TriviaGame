@@ -10,7 +10,7 @@ var App = function(questions) {
 
 		this.headerImage = $("<img>").on("load", function() {
 			numToLoad--;
-		}).attr("src", "assets/img/WTP.png")
+		}).attr("src", "assets/img/WTP.jpg")
 
 		for (var i = 0; i < questions.length; i++) {
 			numToLoad += 2;
