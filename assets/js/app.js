@@ -56,6 +56,7 @@ var App = function(questions) {
         $("<h2>").addClass("text-center text-md-right mt-md-4 mt-lg-2").attr("id", "timeRemaining").appendTo(col2);
 
         $("<hr>").appendTo(body);
+        $("<div>").attr("id", "pokeFact").appendTo(body);
 
         $("<div>").addClass("d-flex flex-column flex-md-row justify-content-center").attr("id", "buttons").appendTo(body);
 
@@ -77,7 +78,7 @@ var App = function(questions) {
         // Clear old interface
         $("#hiddenImage").remove();
         $("#visibleImage").remove();
-        $("#pokeFact").remove();
+        $("#pokeFact").empty();
         buttons.empty();
 
         // Setup new interface
@@ -121,10 +122,9 @@ var App = function(questions) {
 
         // Update interface
         $("#timeRemaining").text("Next Round Starts Soon");
-        var pokeFact = $("<div>").attr("id", "pokeFact");
-        pokeFact.append($("<hr>"));
+        var pokeFact = $("#pokeFact");
         pokeFact.append($("<h3>").text(this.game.currentQuestion.fact));
-        $("<hr>").before(pokeFact);
+        pokeFact.append($("<hr>"));
         $(".pokeball").each(function() {
             var ctx = $(this)[0].getContext("2d");
             ctx.clearRect(0, 0, $(this).width(), $(this).height());
