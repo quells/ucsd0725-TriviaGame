@@ -51,8 +51,9 @@
 		<script src="assets/js/trivia.js" charset="utf-8"></script>
 		<script src="assets/js/app.js" charset="utf-8"></script>
 		<script type="text/javascript">
+			var app;
 			$(document).ready(function() {
-				var app = new App(MysteryPokemon);
+				app = new App(MysteryPokemon);
 				app.preLoadImages(function() {
 					// Remove loading interface
 					exitLoadingLoop = true;
