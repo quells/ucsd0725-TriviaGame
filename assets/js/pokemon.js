@@ -11,5 +11,6 @@ var Pokemon = function(correct, alternates, hiddenURL, visibleURL) {
 };
 
 var MysteryPokemon = [
-	new Pokemon("Pikachu", ["Raichu", "Sandshrew", "Ratata"], "assets/img/pikachu-hidden.png", "assets/img/pikachu-visible.png")
+	new Pokemon("Pikachu", ["Raichu", "Sandshrew", "Ratata"], "assets/img/pikachu-hidden.png", "assets/img/pikachu-visible.png"),
+	new Pokemon("Nidoran", ["Raticate", "Clefable", "Vulpix"], "assets/img/nidoran-hidden.png", "assets/img/nidoran-visible.png")
 ];
