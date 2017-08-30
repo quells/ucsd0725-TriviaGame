@@ -17,7 +17,7 @@ var MysteryPokemon = [
                 "assets/img/pikachu-visible.png",
                 "When several of these Pokémon gather, their electricity could build and cause lightning storms."),
     new Pokemon("Nidoran", ["Raticate", "Clefable", "Vulpix"],
-				"assets/img/nidoran-hidden.png",
-				"assets/img/nidoran-visible.png",
-				"The poison hidden in its small horn is extremely potent. Even a tiny scratch can have fatal results.")
+                "assets/img/nidoran-hidden.png",
+                "assets/img/nidoran-visible.png",
+                "The poison hidden in its small horn is extremely potent. Even a tiny scratch can have fatal results.")
 ];
