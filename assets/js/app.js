@@ -37,11 +37,12 @@ var App = function(questions) {
 
     this.main = function() {
         this.buildInterface();
-        this.game = new TriviaGame(MysteryPokemon);
+        this.game = new TriviaGame(this.questions.slice());
         this.handleQuestion(this.game.currentQuestion);
     };
 
     this.buildInterface = function() {
+        $("#container").empty();
         var card = $("<div>").addClass("card mt-3");
 
         var header = $("<div>").addClass("card-img-top").attr("id", "poke-image").appendTo(card);
@@ -161,8 +162,21 @@ var App = function(questions) {
     this.handleNextQuestion = function() {
         var gameIsFinished = this.game.handleNextQuestion();
         if (gameIsFinished) {
-            console.log("game over");
-            // TODO: Update UI with game stats, etc
+            // Display stats
+            var body = $(".card-body");
+            body.empty();
+            var alignCenter = $("<div>").addClass("text-center");
+            $("<h2>").text("Correct: " + this.game.correctAnswers + " / " + this.game.totalAnswers).appendTo(alignCenter);
+
+            // Reset game
+            this.game.reset();
+            var self = this;
+            var newGameButton = $("<button>").addClass("btn btn-poke m-1").text("Try Again").click(function() {
+                // Start new game
+                self.main();
+            });
+            alignCenter.append(newGameButton);
+            body.append(alignCenter);
         } else {
             this.handleQuestion(this.game.currentQuestion);
         }
