@@ -17,12 +17,12 @@ var App = function(questions) {
             var p = questions[i];
             $("<img>").attr("index", i).on("load", function() {
                 var i = $(this).attr("index");
-                questions[i].hiddenImage = $(this).addClass("img-fluid poke-overlay");;
+                questions[i].hiddenImage = $(this).addClass("img-fluid poke-overlay");
                 numToLoad--;
             }).attr("src", p.hiddenURL);
             $("<img>").attr("index", i).on("load", function() {
                 var i = $(this).attr("index");
-                questions[i].visibleImage = $(this).addClass("img-fluid poke-overlay");;
+                questions[i].visibleImage = $(this).addClass("img-fluid poke-overlay");
                 numToLoad--;
             }).attr("src", p.visibleURL);
         }
