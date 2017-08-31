@@ -30,7 +30,7 @@ var App = function(questions) {
         var loadingInterval = setInterval(function() {
             if (numToLoad < 1) {
                 clearInterval(loadingInterval);
-                callback();
+                callback(); // Remove pre-loading UI
             }
         }, 20);
     };
