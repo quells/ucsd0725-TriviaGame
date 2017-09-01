@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Who&rsquo;s That Pok&#233;mon?</title>
+        <link href="https://fonts.googleapis.com/css?family=Caveat+Brush" rel="stylesheet">
         <link rel="stylesheet" href="assets/css/reset.css">
         <link rel="stylesheet" href="assets/css/gameboy.css">
     </head>
@@ -12,8 +13,10 @@
             <div id="screen">
                 <div id="screen-border">
                     <div id="power-led"></div>
-                    <canvas id="screen-canvas" width="220" height="198"></canvas>
-                    <div class="clear"></div>
+                    <canvas id="screen-canvas" width="320" height="288"></canvas>
+                    <span id="logo">GAME BOY&nbsp;
+                        <span class="color berry">C</span><span class="color grape">O</span><span class="color kiwi">L</span><span class="color dandelion">O</span><span class="color teal">R</span>
+                    </span>
                 </div>
             </div>
             <div id="controls">
@@ -29,28 +32,93 @@
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-        <script src="assets/js/thumbnail.js" charset="utf-8"></script>
         <script type="text/javascript">
             var canvas = $("#screen-canvas")[0];
             var ctx = canvas.getContext("2d");
 
-            var menuBG = new Image();
-            menuBG.onload = function() {
-                ctx.drawImage(menuBG, 0, 136);
-            };
-            menuBG.src = "assets/img/menu.png";
+            var halfResCanvas = $("<canvas>")[0];
+            halfResCanvas.width = canvas.width/2;
+            halfResCanvas.height = canvas.height/2;
+            var halfCtx = halfResCanvas.getContext("2d");
 
+            var images = {};
+            var imagesToLoad = [
+                "assets/img/gameboy/menu.png"
+            ];
+            var numImagesToLoad = 0;
+            for (var i = 0; i < imagesToLoad.length; i++) {
+                numImagesToLoad++;
+                var img = new Image();
+                var url = imagesToLoad[i];
+                images[url] = img;
+                images[url].onload = function() {
+                    numImagesToLoad--;
+                }
+                images[url].src = url;
+            }
+            var loadingInterval = setInterval(function() {
+                if (numImagesToLoad < 1) {
+                    clearInterval(loadingInterval);
+                    console.log(images)
+                    $("#power-led").addClass("power-on");
+                    main();
+                }
+            }, 20);
 
-            var img = new Image();
-            img.onload = function() {
-                var thumb = new Thumbnail(img, 242, 5);
-                ctx.drawImage(thumb.canvas, 0, 0)
+            function main() {
+                halfCtx.drawImage(images["assets/img/gameboy/menu.png"], 0, 100);
+
+                var upscale = upscaleCanvas(halfResCanvas, 2);
+                ctx.drawImage(upscale, 0, 0);
             };
-            img.src = "assets/img/pikachu-visible.png";
-/*
-NOTES
-Menu is 45/144 (62px leaving 136px vertical, including margin)
-*/
+
+            function upscaleCanvas(canvasIn, scale) {
+                var ctxIn = canvasIn.getContext("2d");
+
+                var src = ctxIn.getImageData(0, 0, canvasIn.width, canvasIn.height);
+                var dest = {width: canvasIn.width*scale, height: canvasIn.height*scale};
+                dest.data = new Array(dest.width * dest.height * 4);
+
+                var idx1, idx2, x, y, oy;
+                for (var j = 0; j < canvasIn.height; j++) {
+                    oy = j*canvasIn.width;
+                    y = scale*j;
+                    for (var i = 0; i < canvasIn.width; i++) {
+                        idx1 = (i + oy) * 4;
+                        x = scale*i;
+                        for (var dy = 0; dy < scale; dy++) {
+                            for (var dx = 0; dx < scale; dx++) {
+                                idx2 = (x+dx + (y+dy)*canvasIn.width*scale) * 4;
+                                dest.data[idx2]   = src.data[idx1];
+                                dest.data[idx2+1] = src.data[idx1+1];
+                                dest.data[idx2+2] = src.data[idx1+2];
+                                dest.data[idx2+3] = src.data[idx1+3];
+                            }
+                        }
+                    }
+                }
+
+                var canvasOut = $("<canvas>")[0];
+                canvasOut.width = dest.width;
+                canvasOut.height = dest.height;
+                var ctxOut = canvasOut.getContext("2d");
+
+                ctxOut.drawImage(canvasIn, 0, 0);
+                var src2 = ctxOut.getImageData(0, 0, dest.width, dest.height);
+                var idx;
+                for (var j = 0; j < dest.height; j++) {
+                    for (var i = 0; i < dest.width; i++) {
+                        idx = (i + j*dest.width) * 4;
+                        src2.data[idx] = dest.data[idx];
+                        src2.data[idx+1] = dest.data[idx+1];
+                        src2.data[idx+2] = dest.data[idx+2];
+                        src2.data[idx+3] = dest.data[idx+3];
+                    }
+                }
+                ctxOut.putImageData(src2, 0, 0);
+
+                return canvasOut;
+            }
         </script>
     </body>
 </html>

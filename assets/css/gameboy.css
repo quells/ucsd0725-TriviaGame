@@ -6,7 +6,18 @@ html, body {
 
 body {
     text-align: center;
-    background-color: #555;
+    background-color: #3C5DA6;
+	background-image: url("../img/pokeball-pattern.png");
+	background-attachment: fixed;
+}
+
+canvas {
+  image-rendering: optimizeSpeed;             /* Older versions of FF          */
+  image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+  image-rendering: -webkit-optimize-contrast; /* Safari                        */
+  image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+  image-rendering: pixelated;                 /* Awesome future-browsers       */
+  -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 }
 
 .clear { clear: both; }
@@ -17,22 +28,22 @@ body {
     max-width: 360px;
     min-height: 100%;
     text-align: center;
-    background-color: #c5bad2; /* Purple */
+    background-color: #bbb;
+    /*background-color: #c5bad2; /* Purple */*/
 }
 
 #screen-border {
+    margin: 0 auto;
+    width: 320px;
+    height: 340px;
     background-color: #313335; /* Dark Grey */
     border-radius: 7px;
-    margin: 0 auto;
-    max-width: 320px;
+    text-align: left;
+    position: relative;
 }
 
 #power-led {
-    margin: 80px 32px 0 11px;
-    float: left;
-    width: 7px; height: 7px;
-    border-radius: 5px;
-    background-color: #100;
+    display: none;
 }
 
 #power-led.power-on {
@@ -42,9 +53,30 @@ body {
 
 #screen-canvas {
     background-color: #a7b4a3; /* Off LCD */
-    float: left;
-    margin: 30px 0 40px;
+    position: absolute;
 }
+
+#logo {
+    position: absolute;
+    top: 300px; left: 55px;
+    color: #7099a4;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    font-style: italic;
+}
+
+.color {
+    font-family: "Caveat Brush", "Comic Sans", cursive;
+    font-style: normal;
+    font-size: 28px;
+}
+
+.berry { color: #9c4769; }
+.grape { color: #77578a; }
+.kiwi { color: #5eac42; }
+.dandelion { color: #bcc43a; }
+.teal { color: #218cb4; }
 
 button, .button-filler {
     background-color: #39383c; /* Grey */
@@ -127,11 +159,19 @@ button img, .button-filler img {
     }
 
     #wrapper {
-        padding-top: 15px;
+        padding-top: 10px;
         border-radius: 15px 15px 30px 30px;
         min-height: 500px;
         height: 620px;
     }
+
+    #screen-border {
+        width: 340px;
+        height: 350px;
+    }
+
+    #screen-canvas { top: 10px; left: 10px; }
+    #logo { top: 310px; }
 
     #dpad {
         margin: 40px 0 0 30px;
@@ -139,4 +179,22 @@ button img, .button-filler img {
 
     #A { top: 66px; right: 37px; }
     #B { top: 88px; right: 103px; }
+}
+
+@media screen and (min-width: 400px) {
+    #wrapper { max-width: 400px; }
+
+    #screen-border { width: 380px; height: 360px; }
+    #screen-canvas { top: 20px; left: 30px; }
+    #logo { top: 320px; left: 75px;}
+
+    #power-led {
+        position: absolute;
+        top: 70px;
+        left: 10px;
+        width: 7px; height: 7px;
+        border-radius: 5px;
+        background-color: #100;
+        display: block;
+    }
 }
