@@ -1,7 +1,6 @@
 var TriviaGame = function(questions) {
     this.questions = questions;
     this.spentQuestions = [];
-    // TODO: shuffle questions
     this.currentQuestion = this.questions.pop();
 
     this.correctAnswers = 0;
@@ -14,7 +13,14 @@ var TriviaGame = function(questions) {
         this.questions = this.questions.concat(this.spentQuestions);
         this.spentQuestions = [];
         if (typeof this.currentQuestion !== "undefined") { this.questions.push(this.currentQuestion); }
-        // TODO: shuffle questions
+
+        for (var i = 0; i < this.questions.length; i++) {
+            var q = this.questions[i];
+            q.options = Shuffle(q.options);
+            this.questions[i] = q;
+        }
+        this.questions = Shuffle(this.questions);
+
         this.currentQuestion = this.questions.pop();
     }
 
@@ -32,4 +38,6 @@ var TriviaGame = function(questions) {
         this.currentQuestion = this.questions.pop();
         return false;
     }
+
+    this.reset();
 }
