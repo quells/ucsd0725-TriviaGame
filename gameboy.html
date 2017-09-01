@@ -29,8 +29,28 @@
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="assets/js/thumbnail.js" charset="utf-8"></script>
         <script type="text/javascript">
+            var canvas = $("#screen-canvas")[0];
+            var ctx = canvas.getContext("2d");
 
+            var menuBG = new Image();
+            menuBG.onload = function() {
+                ctx.drawImage(menuBG, 0, 136);
+            };
+            menuBG.src = "assets/img/menu.png";
+
+
+            var img = new Image();
+            img.onload = function() {
+                var thumb = new Thumbnail(img, 242, 5);
+                ctx.drawImage(thumb.canvas, 0, 0)
+            };
+            img.src = "assets/img/pikachu-visible.png";
+/*
+NOTES
+Menu is 45/144 (62px leaving 136px vertical, including margin)
+*/
         </script>
     </body>
 </html>
