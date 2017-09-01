@@ -8,7 +8,6 @@ var Pokemon = function(correct, alternates, hiddenURL, visibleURL, fact) {
 
     this.options = alternates.slice(0); // Copy by value
     this.options.push(correct);
-    this.options = FisherYatesShuffle(this.options);
 };
 
 var MysteryPokemon = [
