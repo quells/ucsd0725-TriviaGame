@@ -1,5 +1,6 @@
 var App = function(questions) {
     this.questions = questions;
+    this.game = new TriviaGame(this.questions.slice(0));
     this.timeRemaining = 0;
     this.countdownInterval;
     this.pokeballDark = new Pokeball(1, "#ccc");
@@ -37,8 +38,15 @@ var App = function(questions) {
 
     this.main = function() {
         this.buildInterface();
-        this.game = new TriviaGame(this.questions.slice());
-        this.handleQuestion(this.game.currentQuestion);
+
+        var readyBtn = $("<button>").addClass("btn btn-poke").attr("id", "btn-ready").text("Begin!");
+        var self = this;
+        readyBtn.click(function() {
+            $("#btn-ready").remove();
+            $("h1").text("Who’s That Pokémon?")
+            self.handleQuestion(self.game.currentQuestion);
+        });
+        $("#buttons").append(readyBtn);
     };
 
     this.buildInterface = function() {
@@ -52,7 +60,7 @@ var App = function(questions) {
 
         var row = $("<div>").addClass("row").appendTo(body);
         var col1 = $("<div>").addClass("col-12 col-md-5 col-lg-6").appendTo(row);
-        $("<h1>").addClass("card-title text-center text-md-left").text("Who’s That Pokémon?").appendTo(col1);
+        $("<h1>").addClass("card-title text-center text-md-left").text("Ready?").appendTo(col1);
         var col2 = $("<div>").addClass("col-12 col-md-7 col-lg-6").appendTo(row);
         $("<h2>").addClass("text-center text-md-right mt-md-4 mt-lg-2").attr("id", "timeRemaining").appendTo(col2);
 
@@ -166,13 +174,14 @@ var App = function(questions) {
             var body = $(".card-body");
             body.empty();
             var alignCenter = $("<div>").addClass("text-center");
-            $("<h2>").text("Correct: " + this.game.correctAnswers + " / " + this.game.totalAnswers).appendTo(alignCenter);
+            $("<h2>").addClass("mb-3").text("Correct: " + this.game.correctAnswers + " / " + this.game.totalAnswers).appendTo(alignCenter);
 
             // Reset game
             this.game.reset();
             var self = this;
             var newGameButton = $("<button>").addClass("btn btn-poke m-1").text("Try Again").click(function() {
                 // Start new game
+                self.game.reset();
                 self.main();
             });
             alignCenter.append(newGameButton);
